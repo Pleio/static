@@ -1,12 +1,12 @@
 {
-	"name": "coldtrick/static",
+	"name": "pleio/static",
 	"description": "Create static content pages",
 	"type": "elgg-plugin",
 	"keywords": ["elgg", "plugin", "content"],
 	"license": "GPL-2.0",
 	"support": {
-		"source": "https://github.com/ColdTrick/static",
-		"issues": "https://github.com/ColdTrick/static/issues"
+		"source": "https://github.com/Pleio/static",
+		"issues": "https://github.com/Pleio/static/issues"
 	},
 	"require": {
 		"composer/installers": "^1.0.8"
