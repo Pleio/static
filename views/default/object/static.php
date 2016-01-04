@@ -33,27 +33,27 @@ if (elgg_extract('full_view', $vars)) {
 		'body' => $body,
 	));
 
-} elseif (elgg_in_context("search")) {
-	// probably search
-
-	$title = $entity->getVolatileData("search_matched_title");
-	$description = $entity->getVolatileData("search_matched_description");
-
-	$title = elgg_view("output/url", array(
-		"text" => $title,
-		"href" => $entity->getURL(),
-		"is_trusted" => true
-	));
-	$body = $title . "<br />" . $description;
-
-	echo elgg_view_image_block("", $body);
-
 } elseif (elgg_in_context("widgets")) {
-	echo elgg_view("output/url", array(
-		"text" => $entity->title,
-		"href" => $entity->getURL(),
-		"is_trusted" => true
+	$metadata = elgg_view_menu('entity', array(
+		'entity' => $vars['entity'],
+		'handler' => 'static',
+		'sort_by' => 'priority',
+		'class' => 'elgg-menu-hz',
 	));
+
+	$params = array(
+		'entity' => $entity,
+		'subtitle' => false,
+		'content' => $entity->description
+	);
+
+	$icon = elgg_view('icon/default', array(
+		'entity' => $entity,
+		'size' => 'tiny'
+	));
+
+	$body = elgg_view('object/elements/summary', $params);
+	echo elgg_view_image_block($icon, $body);
 
 	$show_children = (bool) elgg_extract('show_children', $vars, false);
 	if ($show_children) {
@@ -68,6 +68,25 @@ if (elgg_extract('full_view', $vars)) {
 			echo elgg_view_entity_list($children, $params);
 		}
 	}
+} elseif (elgg_in_context("search")) {
+	// probably search
+
+	$title = $entity->getVolatileData("search_matched_title");
+	$description = $entity->getVolatileData("search_matched_description");
+
+	$title = elgg_view("output/url", array(
+		"text" => $title,
+		"href" => $entity->getURL(),
+		"is_trusted" => true
+	));
+	$body = $title . "<br />" . $description;
+
+	$icon = elgg_view('icon/default', array(
+		'entity' => $entity,
+		'size' => 'tiny'
+	));
+
+	echo elgg_view_image_block($icon, $body);
 } else {
 	// workaround for can_edit_entity() in 1.8
 	$ia = elgg_set_ignore_access(can_write_to_container(0, $entity->getOwnerGUID(), 'object', 'static'));
