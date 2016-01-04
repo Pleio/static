@@ -41,9 +41,10 @@ if (elgg_extract('full_view', $vars)) {
 		'class' => 'elgg-menu-hz',
 	));
 
+	$subtitle = elgg_echo('static:last_revision', array(elgg_view_friendly_time($entity->time_updated)));
 	$params = array(
 		'entity' => $entity,
-		'subtitle' => false,
+		'subtitle' => $subtitle,
 		'content' => $entity->description
 	);
 

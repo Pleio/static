@@ -34,6 +34,7 @@ Klik hier voor een complete lijst van de verouderde content
   'static:new:comment' => 'Reacties toestaan',
   'static:new:moderators' => 'Moderatoren toewijzen',
   'static:add:subpage' => 'Maak een subpagina',
+  'static:last_revision' => 'Laatst bijgewerkt %s',
   'static:revisions' => 'Revisies',
   'static:new:parent' => 'Selecteer bovenliggende pagina',
   'static:new:parent:top_level' => 'Geen bovenliggende pagina',
