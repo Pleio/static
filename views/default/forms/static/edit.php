@@ -24,13 +24,14 @@ if ($entity) {
 	$content_guid = $entity->getGUID();
 	$content_title = $entity->title;
 	$content_description = $entity->description;
+	$content_tags = $entity->tags;
 	$content_access_id = $entity->access_id;
 	$friendly_title = $entity->friendly_title;
 	$parent_guid = $entity->getContainerGUID();
 	$content_enable_comments = $entity->enable_comments;
 	$content_moderators = $entity->moderators;
 	$content_owner_guid = $entity->getOwnerGUID();
-	
+
 	unset($parent_options[$entity->getGUID()]);
 } else {
 	if (!empty($parent_guid)) {
@@ -71,6 +72,9 @@ if (!empty($parent_options)) {
 
 $form_body .= "<div><label>" . elgg_echo("static:new:comment") . "</label><br />";
 $form_body .= elgg_view("input/dropdown", array("name" => "enable_comments", "value" => elgg_get_sticky_value("static", "enable_comments", $content_enable_comments), "options_values" => $comment_options)) . "</div>";
+
+$form_body .= "<div><label>" . elgg_echo("tags") . "</label><br />";
+$form_body .= elgg_view("input/tags", array("name" => "tags", "value" => elgg_get_sticky_value("static", "tags", $content_tags))) . "</div>";
 
 $form_body .= "<div><label>" . elgg_echo("static:new:moderators") . "</label><br />";
 $form_body .= elgg_view("input/userpicker", array("name" => "moderators", "value" => elgg_get_sticky_value("static", "moderators", $content_moderators)));

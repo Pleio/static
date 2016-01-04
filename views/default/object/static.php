@@ -3,14 +3,14 @@
 $entity = elgg_extract('entity', $vars);
 
 if (elgg_extract('full_view', $vars)) {
-	
+
 	$metadata = elgg_view_menu('entity', array(
 		'entity' => $vars['entity'],
 		'handler' => 'static',
 		'sort_by' => 'priority',
 		'class' => 'elgg-menu-hz',
 	));
-	
+
 	$params = array(
 		'entity' => $entity,
 		'title' => false,
@@ -18,7 +18,7 @@ if (elgg_extract('full_view', $vars)) {
 		'tags' => false
 	);
 	$summary = elgg_view('object/elements/summary', $params);
-	
+
 	$body = "";
 	if ($entity->icontime) {
 		$body .= elgg_view_entity_icon($entity, "large", array(
@@ -27,7 +27,7 @@ if (elgg_extract('full_view', $vars)) {
 		));
 	}
 	$body .= elgg_view("output/longtext", array("value" => $entity->description));
-	
+
 	echo elgg_view('object/elements/full', array(
 		'summary' => $summary,
 		'body' => $body,
@@ -38,7 +38,7 @@ if (elgg_extract('full_view', $vars)) {
 
 	$title = $entity->getVolatileData("search_matched_title");
 	$description = $entity->getVolatileData("search_matched_description");
-	
+
 	$title = elgg_view("output/url", array(
 		"text" => $title,
 		"href" => $entity->getURL(),
@@ -47,31 +47,31 @@ if (elgg_extract('full_view', $vars)) {
 	$body = $title . "<br />" . $description;
 
 	echo elgg_view_image_block("", $body);
-	
+
 } elseif (elgg_in_context("widgets")) {
 	echo elgg_view("output/url", array(
 		"text" => $entity->title,
 		"href" => $entity->getURL(),
 		"is_trusted" => true
 	));
-	
+
 	$show_children = (bool) elgg_extract('show_children', $vars, false);
 	if ($show_children) {
 		$children = static_get_ordered_children($entity);
-		
+
 		if (!empty($children)) {
 			$params = $vars;
 			// unset some stuff to preven deadloops
 			unset($params['entity']);
 			unset($params['items']);
-			
+
 			echo elgg_view_entity_list($children, $params);
 		}
 	}
 } else {
 	// workaround for can_edit_entity() in 1.8
 	$ia = elgg_set_ignore_access(can_write_to_container(0, $entity->getOwnerGUID(), 'object', 'static'));
-	
+
 	$show_edit = elgg_extract("show_edit", $vars, true);
 
 	$body = "<tr>";
@@ -89,13 +89,13 @@ if (elgg_extract('full_view', $vars)) {
 			"href" => "action/static/delete?guid=" . $entity->getGUID(),
 			"text" => elgg_view_icon("delete")
 		));
-	
+
 		$body .= "<td width='1%' class='center'>" . $edit_link . "</td>";
 		$body .= "<td width='1%' class='center'>" . $delete_link . "</td>";
 	}
 	$body .= "</tr>";
-	
+
 	elgg_set_ignore_access($ia);
-	
+
 	echo $body;
 }

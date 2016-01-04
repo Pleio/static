@@ -13,6 +13,8 @@ $friendly_title = static_make_friendly_title($friendly_title, $guid);
 $description = get_input("description");
 $access_id = (int) get_input("access_id", ACCESS_PUBLIC);
 
+$tags = string_to_tag_array(get_input("tags"));
+
 $enable_comments = get_input("enable_comments");
 $moderators = get_input("members");
 
@@ -35,12 +37,12 @@ if (!elgg_instanceof($owner, "group")) {
 
 if ($parent_guid) {
 	$ia = elgg_set_ignore_access(true);
-	
+
 	$parent = get_entity($parent_guid);
 	if (!elgg_instanceof($parent, "object", "static")) {
 		$parent_guid = $owner->getGUID();
 	}
-	
+
 	elgg_set_ignore_access($ia);
 } else {
 	$parent_guid = $owner->getGUID();
@@ -53,7 +55,7 @@ if ($guid) {
 
 	// workaround for can_edit_entity() in 1.8
 	$ia = elgg_set_ignore_access(can_write_to_container(0, $entity->getOwnerGUID(), 'object', 'static'));
-	
+
 	if (!elgg_instanceof($entity, "object", "static") || !$entity->canEdit()) {
 		elgg_set_ignore_access($ia);
 		forward(REFERER);
@@ -68,15 +70,15 @@ if (!$entity) {
 	$entity->owner_guid = $owner->getGUID();
 	$entity->container_guid = $parent_guid;
 	$entity->access_id = $access_id;
-	
+
 	$ia = elgg_set_ignore_access(true);
 	if (!$entity->save()) {
 		elgg_set_ignore_access($ia);
-		
+
 		register_error(elgg_echo("actionunauthorized"));
 		forward(REFERER);
 	}
-	
+
 	elgg_set_ignore_access($ia);
 	$new_entity = true;
 }
@@ -89,13 +91,13 @@ if ($parent_guid !== (int) $entity->getContainerGUID()) {
 // place in the correct tree
 $subpage_relationship_guid = false;
 if ($parent_guid !== $owner->getGUID()) {
-	
+
 	$ia = elgg_set_ignore_access(true);
 	$parent = get_entity($parent_guid);
 	elgg_set_ignore_access($ia);
-	
+
 	if (elgg_instanceof($parent, "object", "static")) {
-		
+
 		if ($parent->getContainerGUID() == $owner->getGUID()) {
 			// parent is a top page
 			$subpage_relationship_guid = $parent_guid;
@@ -108,16 +110,16 @@ if ($parent_guid !== $owner->getGUID()) {
 				"relationship" => "subpage_of",
 				"limit" => 1
 			));
-			
+
 			if ($relations) {
 				$subpage_relationship_guid = $relations[0]->getGUID();
 			}
 		}
-		
+
 		if ($subpage_relationship_guid) {
 			// remove old tree relationships
 			remove_entity_relationships($entity->getGUID(), "subpage_of");
-			
+
 			// add new tree relationship
 			$entity->addRelationship($subpage_relationship_guid, "subpage_of");
 		}
@@ -133,6 +135,7 @@ $ia = elgg_set_ignore_access(true);
 
 // save all the content
 $entity->title = $title;
+$entity->tags = $tags;
 $entity->description = $description;
 $entity->access_id = $access_id;
 $entity->container_guid = $parent_guid;
@@ -148,14 +151,14 @@ if ($remove_icon) {
 } elseif (get_resized_image_from_uploaded_file("thumbnail", 200, 200)) {
 	$fh = new ElggFile();
 	$fh->owner_guid = $entity->getGUID();
-	
+
 	$prefix = "thumb";
 	$icon_sizes = elgg_get_config("icon_sizes");
-	
+
 	if (!empty($icon_sizes)) {
 		foreach ($icon_sizes as $size => $info) {
 			$fh->setFilename($prefix . $size . ".jpg");
-			
+
 			$contents = get_resized_image_from_uploaded_file("thumbnail", $info["w"], $info["h"], $info["square"], $info["upscale"]);
 			if (!empty($contents)) {
 				$fh->open("write");
@@ -163,7 +166,7 @@ if ($remove_icon) {
 				$fh->close();
 			}
 		}
-		
+
 		$entity->icontime = time();
 		$entity->save();
 	}
