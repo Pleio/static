@@ -89,9 +89,6 @@ if (elgg_extract('full_view', $vars)) {
 
 	echo elgg_view_image_block($icon, $body);
 } else {
-	// workaround for can_edit_entity() in 1.8
-	$ia = elgg_set_ignore_access(can_write_to_container(0, $entity->getOwnerGUID(), 'object', 'static'));
-
 	$show_edit = elgg_extract("show_edit", $vars, true);
 
 	$body = "<tr>";
@@ -114,8 +111,6 @@ if (elgg_extract('full_view', $vars)) {
 		$body .= "<td width='1%' class='center'>" . $delete_link . "</td>";
 	}
 	$body .= "</tr>";
-
-	elgg_set_ignore_access($ia);
 
 	echo $body;
 }

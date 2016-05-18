@@ -2,9 +2,7 @@
 
 $guid = (int) get_input("guid");
 
-$ia = elgg_set_ignore_access(true);
 $entity = get_entity($guid);
-elgg_set_ignore_access($ia);
 
 if (empty($entity) || !elgg_instanceof($entity, "object", "static")) {
 	forward(REFERER);
@@ -17,7 +15,6 @@ if (!has_access_to_entity($entity) && !$entity->canEdit() && !$can_write_to_cont
 	forward(REFERER);
 }
 
-$ia = elgg_set_ignore_access($can_write_to_container);
 if ($entity->canEdit()) {
 	elgg_register_menu_item("title", array(
 		"name" => "edit",
@@ -33,7 +30,6 @@ if ($entity->canEdit()) {
 		"link_class" => "elgg-button elgg-button-action",
 	));
 }
-elgg_set_ignore_access($ia);
 
 // page owner (for groups)
 $owner = $entity->getOwnerEntity();
@@ -42,8 +38,6 @@ if (elgg_instanceof($owner, "group")) {
 }
 
 // show breadcrumb
-$ia = elgg_set_ignore_access(true);
-
 $container_entity = $entity->getContainerEntity();
 if (elgg_instanceof($container_entity, "object", "static")) {
 	while(elgg_instanceof($container_entity, "object", "static")) {
@@ -55,7 +49,6 @@ if (elgg_instanceof($container_entity, "object", "static")) {
 	
 	elgg_push_breadcrumb($entity->title);
 }
-elgg_set_ignore_access($ia);
 
 // build content
 $title = $entity->title;

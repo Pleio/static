@@ -32,7 +32,6 @@ Klik hier voor een complete lijst van de verouderde content
   'static:action:edit:success' => 'Succesvol opgeslagen',
   'static:edit' => 'Maak/Bewerk een statische pagina',
   'static:new:comment' => 'Reacties toestaan',
-  'static:new:moderators' => 'Moderatoren toewijzen',
   'static:add:subpage' => 'Maak een subpagina',
   'static:last_revision' => 'Laatst bijgewerkt %s',
   'static:revisions' => 'Revisies',

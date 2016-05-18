@@ -38,14 +38,12 @@ function static_init() {
 	// events
 	elgg_register_event_handler("create", "annotation", "static_create_comment_handler");
 	elgg_register_event_handler("delete", "object", "static_delete_object_handler");
-	elgg_register_event_handler("upgrade", "system", "static_upgrade_system_handler");
 	
 	// plugin hooks
 	elgg_register_plugin_hook_handler("route", "all", "static_route_hook_handler");
 	elgg_register_plugin_hook_handler("entity:icon:url", "object", "static_entity_icon_url_hook_handler");
-	
-	elgg_register_plugin_hook_handler("permissions_check", "object", "static_permissions_check_hook_handler");
-	elgg_register_plugin_hook_handler("container_permissions_check", "all", "static_container_permissions_check_hook_handler");
+
+	elgg_register_plugin_hook_handler("container_permissions_check", "object", "static_container_permissions_check");
 	elgg_register_plugin_hook_handler("permissions_check:comment", "object", "static_permissions_comment_hook_handler");
 	
 	elgg_register_plugin_hook_handler("register", "menu:owner_block", "static_register_owner_block_menu_hook_handler");
@@ -57,9 +55,7 @@ function static_init() {
 	elgg_register_plugin_hook_handler("entity_types", "content_subscriptions", "static_content_subscriptions_entity_types_handler");
 	
 	elgg_register_plugin_hook_handler("cron", "daily", "static_daily_cron_handler");
-	
-	elgg_register_plugin_hook_handler("search", "object:static", "static_search_handler");
-	
+
 	// actions
 	elgg_register_action("static/edit", dirname(__FILE__) . "/actions/edit.php");
 	elgg_register_action("static/delete", dirname(__FILE__) . "/actions/delete.php");

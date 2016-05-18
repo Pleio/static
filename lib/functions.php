@@ -18,19 +18,13 @@ function static_setup_page_menu($entity) {
 	} elseif(!empty($page_owner) && ($entity->getContainerGUID() == $page_owner->getGUID())) {
 		$root_entity = $entity;
 	} else {
-		$ia = elgg_set_ignore_access(true);
-		
 		$relations = $entity->getEntitiesFromRelationship("subpage_of", false, 1);
 		if ($relations) {
 			$root_entity = $relations[0];
 		}
-		
-		elgg_set_ignore_access($ia);
 	}
 	
 	if ($root_entity) {
-		
-		$ia = elgg_set_ignore_access(true);
 		
 		$priority = (int) $root_entity->order;
 		if (empty($priority)) {
@@ -46,7 +40,6 @@ function static_setup_page_menu($entity) {
 			"section" => "static"
 		);
 		
-		elgg_set_ignore_access($ia);
 		
 		if ($root_entity->canEdit()) {
 			$root_menu_options["itemClass"] = array("static-sortable");
@@ -55,7 +48,6 @@ function static_setup_page_menu($entity) {
 		elgg_register_menu_item("page", $root_menu_options);
 		
 		// add sub menu items
-		$ia = elgg_set_ignore_access(true);
 		$submenu_options = array(
 			"type" => "object",
 			"subtype" => "static",
@@ -65,7 +57,6 @@ function static_setup_page_menu($entity) {
 			"inverse_relationship" => true
 		);
 		$submenu_entities = elgg_get_entities_from_relationship($submenu_options);
-		elgg_set_ignore_access($ia);
 		
 		if ($submenu_entities) {
 			$can_write_to_container = can_write_to_container(0, $root_entity->getOwnerGUID(), 'object', 'static');
@@ -76,7 +67,6 @@ function static_setup_page_menu($entity) {
 					continue;
 				}
 				
-				$ia = elgg_set_ignore_access(true);
 				$priority = (int) $submenu_item->order;
 				if (empty($priority)) {
 					$priority = (int) $submenu_item->time_created;
@@ -92,7 +82,6 @@ function static_setup_page_menu($entity) {
 					"section" => "static"
 				));
 				
-				elgg_set_ignore_access($ia);
 			}
 		}
 	}
@@ -105,55 +94,6 @@ function static_setup_page_menu($entity) {
 			"section" => "static_admin"
 		));
 	}
-}
-
-/**
- * Get the moderators of the parent page(s)
- *
- * @param ElggObject $entity    the static page to check
- * @param bool       $guid_only return only guids (Default: false)
- *
- * @return array in format array(guid => ElggUser)
- */
-function static_get_parent_moderators(ElggObject $entity, $guid_only = false) {
-	$result = array();
-	
-	if (!empty($entity) && elgg_instanceof($entity, "object", "static")) {
-		$ia = elgg_set_ignore_access(true);
-		
-		if ($entity->getContainerGUID() != $entity->site_guid) {
-			$parent = $entity->getContainerEntity();
-			if (!empty($parent)) {
-				$moderators = $parent->moderators;
-				if (!empty($moderators)) {
-					if(!is_array($moderators)) {
-						$moderators = array($moderators);
-					}
-					
-					foreach ($moderators as $user_guid) {
-						$moderator = get_user($user_guid);
-						if (!empty($moderator)) {
-							if (!$guid_only) {
-								$result[$user_guid] = $moderator;
-							} else {
-								$result[] = $user_guid;
-							}
-						}
-					}
-				}
-				
-				// did we reach the top page
-				if (elgg_instanceof($parent, "object", "static")) {
-					// not yet, so check further
-					$result += static_get_parent_moderators($parent, $guid_only);
-				}
-			}
-		}
-		
-		elgg_set_ignore_access($ia);
-	}
-	
-	return $result;
 }
 
 /**
@@ -183,8 +123,6 @@ function static_get_parent_options($parent_guid = 0, $depth = 0) {
 		"limit" => false,
 	);
 	
-	$ia = elgg_set_ignore_access(can_write_to_container(0, $parent->getGUID(), 'object', 'static'));
-	
 	// more memory friendly
 	$parent_entities = new ElggBatch("elgg_get_entities", $options);
 	foreach ($parent_entities as $parent) {
@@ -193,7 +131,6 @@ function static_get_parent_options($parent_guid = 0, $depth = 0) {
 		$result += static_get_parent_options($parent->getGUID(), $depth + 1);
 	}
 	
-	elgg_set_ignore_access($ia);
 	
 	return $result;
 }
@@ -240,12 +177,10 @@ function static_make_friendly_title($friendly_title, $entity_guid = 0) {
 		$options["wheres"] = array("(e.guid <> " . $entity_guid . ")");
 	}
 	
-	$ia = elgg_set_ignore_access(true);
 	$entities = elgg_get_entities_from_metadata($options);
 	if (!empty($entities)) {
 		
 		if (!empty($entity_guid)) {
-			elgg_set_ignore_access($ia);
 			return false;
 		}
 		
@@ -259,7 +194,6 @@ function static_make_friendly_title($friendly_title, $entity_guid = 0) {
 		$friendly_title = $friendly_title . $counter;
 	}
 	
-	elgg_set_ignore_access($ia);
 	
 	return $friendly_title;
 }
@@ -388,7 +322,6 @@ function static_check_children_tree(ElggObject $entity, $tree_guid = 0) {
 	);
 	
 	// ignore access for this part
-	$ia = elgg_set_ignore_access(true);
 	
 	$batch = new ElggBatch("elgg_get_entities", $options);
 	foreach ($batch as $static) {
@@ -404,7 +337,6 @@ function static_check_children_tree(ElggObject $entity, $tree_guid = 0) {
 	}
 	
 	// restore access
-	elgg_set_ignore_access($ia);
 	
 	return true;
 }
@@ -458,9 +390,7 @@ function static_find_old_root_page(ElggObject $entity) {
 		return $entity;
 	}
 	
-	$ia = elgg_set_ignore_access(true);
 	$parent = get_entity($parent_guid);
-	elgg_set_ignore_access($ia);
 	
 	if (empty($parent) || !elgg_instanceof($parent, "object", "static")) {
 		return $entity;

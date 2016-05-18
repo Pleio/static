@@ -16,7 +16,6 @@ $english = array(
 	'static:new:parent' => "Select parent page",
 	'static:new:parent:top_level' => "No parent page / Top Level",
 	'static:new:comment' => "Allow comments",
-	'static:new:moderators' => "Assign moderators",
 	'static:new:thumbnail' => "Upload thumbnail",
 	'static:new:remove_thumbnail' => "Remove thumbnail",
 

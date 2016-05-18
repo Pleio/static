@@ -26,9 +26,7 @@ $options = array(
 	"order_by" => "oe.title asc"
 );
 
-$ia = elgg_set_ignore_access(true);
 $entities = elgg_get_entities($options);
-elgg_set_ignore_access($ia);
 
 if ($entities) {
 	$body = "<table class='elgg-table-alt' id='static-pages-list'>";
